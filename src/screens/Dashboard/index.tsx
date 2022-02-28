@@ -15,6 +15,7 @@ import {
   Transactions,
   Title,
   TransactionList,
+  Button,
 } from "./styles";
 import { HighLightCard } from "../../components/HighlightCard";
 import {
@@ -78,7 +79,9 @@ export function Dashboard() {
               <UserName>Charles</UserName>
             </User>
           </UserInfo>
-          <Icon name="power" />
+          <Button onPress={() => {}}>
+            <Icon name="power" />
+          </Button>
         </UserWrapper>
       </Header>
 

@@ -2,6 +2,7 @@ import styled from "styled-components/native";
 import { FlatList, FlatListProps } from "react-native";
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize"; //lib para melhorar a proporção
 import { Feather } from "@expo/vector-icons";
+import { BorderlessButton } from "react-native-gesture-handler";
 
 import { DataListProps } from ".";
 
@@ -49,6 +50,8 @@ export const UserName = styled.Text`
   font-size: ${RFValue(18)}px;
   font-family: ${({ theme }) => theme.fonts.bold};
 `;
+
+export const Button = styled(BorderlessButton)``;
 export const Icon = styled(Feather)`
   color: ${({ theme }) => theme.colors.atenttion};
   font-size: ${RFValue(24)}px;
