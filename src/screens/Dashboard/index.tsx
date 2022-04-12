@@ -26,6 +26,7 @@ import {
   TransactionCard,
   TransactionCardProps,
 } from "../../components/TransactionCard";
+import { useAuth } from "../../hooks/auth";
 export interface DataListProps extends TransactionCardProps {
   id: string;
 }
@@ -47,26 +48,34 @@ export function Dashboard() {
     {} as HighLightData
   );
 
+  const { singInOut, user } = useAuth();
+
   function getLastTramsactionDate(
     collections: DataListProps[],
     type: "positive" | "negative"
   ) {
-
     /*função para pegar a última data
     Math para descobrir qual o maior número que representa a data
     filter para fazer um filtro baseado no tipo
     map para fazer o mapeamento e pegar somente as datas
     getTime = timestemp um número que representa a data
     */
+
+    const collecionFilttered = collections.filter(
+      (transaction) => transaction.type === type
+    );
+
+    if (collecionFilttered.length === 0) return 0;
+
     const lastTransaction = new Date(
       Math.max.apply(
         Math,
-        collections
-          .filter((transaction) => transaction.type === type)
-          .map((transaction) => new Date(transaction.date).getTime())
+        collecionFilttered.map((transaction) =>
+          new Date(transaction.date).getTime()
+        )
       )
     );
- // formatação para pegar o dia e data e adcionar a frase completa no retorno
+    // formatação para pegar o dia e data e adcionar a frase completa no retorno
     return `${lastTransaction.getDate()} de ${lastTransaction.toLocaleString(
       "pt-br",
       { month: "long" }
@@ -74,7 +83,7 @@ export function Dashboard() {
   }
 
   async function loadTrasactions() {
-    const dataKey = "@gofinaces:transaction";
+    const dataKey = `@gofinaces:transaction_user:${user.id}`;
     const response = await AsyncStorage.getItem(dataKey);
     const transactions = response ? JSON.parse(response) : [];
 
@@ -120,7 +129,10 @@ export function Dashboard() {
       "negative"
     );
 
-    const totalInterval = `01 a ${lastTransactionExpensives}`;
+    const totalInterval =
+      lastTransactionExpensives === 0
+        ? "Não há transações"
+        : `01 a ${lastTransactionExpensives}`;
 
     const total = entriesTotal - expensiveTotal;
     setHighLightData({
@@ -129,14 +141,20 @@ export function Dashboard() {
           style: "currency",
           currency: "BRL",
         }),
-        lastTransaction: lastTransactionEntries,
+        lastTransaction:
+          lastTransactionEntries === 0
+            ? "Não há trasanações"
+            : `Última entrada dia ${lastTransactionEntries}`,
       },
       expensives: {
         amount: expensiveTotal.toLocaleString("pt-br", {
           style: "currency",
           currency: "BRL",
         }),
-        lastTransaction: lastTransactionExpensives,
+        lastTransaction:
+          lastTransactionExpensives === 0
+            ? "Mão há transações"
+            : `Última saída dia ${lastTransactionExpensives}`,
       },
       total: {
         amount: total.toLocaleString("pt-br", {
@@ -173,15 +191,15 @@ export function Dashboard() {
               <UserInfo>
                 <Photo
                   source={{
-                    uri: "https://avatars.githubusercontent.com/u/44650185?v=4",
+                    uri: user.photo,
                   }}
                 />
                 <User>
                   <UserGreeting>Olá, </UserGreeting>
-                  <UserName>Charles</UserName>
+                  <UserName>{user.name}</UserName>
                 </User>
               </UserInfo>
-              <Button onPress={() => {}}>
+              <Button onPress={singInOut}>
                 <Icon name="power" />
               </Button>
             </UserWrapper>
@@ -198,7 +216,7 @@ export function Dashboard() {
               type="down"
               title="Saídas"
               amount={highLightData.expensives.amount}
-              lastTrasction={highLightData.entries.lastTransaction}
+              lastTrasction={highLightData.expensives.lastTransaction}
             />
             <HighLightCard
               type="total"

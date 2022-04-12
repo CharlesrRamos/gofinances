@@ -9,6 +9,7 @@ import { Dashboard } from "../screens/Dashboard";
 import { Register } from "../screens/Register";
 import { Platform } from "react-native";
 import { Resume } from "../screens/Resume";
+import { Signin } from "../screens/Signin";
 
 export function AppRoutes() {
   const theme = useTheme();
@@ -49,7 +50,7 @@ export function AppRoutes() {
         }}
       />
       <Screen
-        name="Resumo"
+        name="Resume"
         component={Resume}
         options={{
           tabBarIcon: ({ size, color }) => (
